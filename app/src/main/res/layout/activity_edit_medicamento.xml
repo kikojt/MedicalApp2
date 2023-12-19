@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:padding="16dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="Editar Medicamento"
+            android:layout_marginBottom="5dp"/>
+
+        <EditText
+            android:id="@+id/editNome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Nome"
+            android:textSize="17sp"
+            android:inputType="text"
+            android:padding="8dp"
+            android:layout_margin="5dp" />
+
+        <EditText
+            android:id="@+id/editDosagem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Dosagem"
+            android:textSize="17sp"
+            android:inputType="text"
+            android:padding="8dp"
+            android:layout_margin="5dp" />
+
+        <Spinner
+            android:id="@+id/editFormaFarmaceutica"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:paddingVertical="6dp"
+            android:layout_margin="5dp"/>
+
+        <EditText
+            android:id="@+id/editPosologia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Posologia"
+            android:textSize="17sp"
+            android:inputType="text"
+            android:padding="8dp"
+            android:layout_margin="5dp" />
+
+        <!-- Botão Horários -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginVertical="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                android:layout_marginVertical="5dp"
+                android:orientation="vertical">
+
+                <!-- Primeiro botão e TextView -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/buttonEditarHora1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:padding="8dp"
+                        android:text="Hora 1"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/editHora1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.2"
+                        android:layout_marginStart="8dp"
+                        android:textSize="17sp" />
+
+                </LinearLayout>
+
+
+                <!-- Segundo botão e TextView -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/buttonEditarHora2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:padding="8dp"
+                        android:text="Hora 2"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/editHora2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.2"
+                        android:layout_marginStart="8dp"
+                        android:textSize="17sp" />
+
+                </LinearLayout>
+
+                <!-- Terceiro botão e TextView -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/buttonEditarHora3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:padding="8dp"
+                        android:text="Hora 3"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/editHora3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.2"
+                        android:layout_marginStart="8dp"
+                        android:textSize="17sp" />
+
+                </LinearLayout>
+
+                <!-- Quarto botão e TextView -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/buttonEditarHora4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
+                        android:padding="8dp"
+                        android:text="Hora 4"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/editHora4"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.2"
+                        android:layout_marginStart="8dp"
+                        android:textSize="17sp" />
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Campos Quantidade e Duração -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginVertical="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Quantidade: "
+                android:layout_marginHorizontal="2dp"
+                android:layout_gravity="center_vertical"
+                android:textSize="17sp" />
+
+            <NumberPicker
+                android:id="@+id/editQuantidade"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_marginHorizontal="5dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Duração: "
+                android:layout_gravity="center_vertical"
+                android:textSize="17sp"
+                android:layout_marginStart="30dp"/>
+
+            <NumberPicker
+                android:id="@+id/editDuracao"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_marginHorizontal="5dp"/>
+
+        </LinearLayout>
+
+        <!-- Botão Data de Início -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:layout_marginVertical="5dp">
+
+            <Button
+                android:id="@+id/buttonEditarData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:padding="8dp"
+                android:text="Data de Início"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:id="@+id/editDataInicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp"
+                android:textSize="17sp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginVertical="15dp" >
+
+            <Button
+                android:id="@+id/buttonCancelar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancelar"
+                android:layout_marginHorizontal="10dp"/>
+
+            <Button
+                android:id="@+id/buttonGuardarEdicao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Guardar"
+                android:layout_marginHorizontal="10dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

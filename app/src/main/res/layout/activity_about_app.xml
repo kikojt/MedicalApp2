@@ -1,0 +1,87 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/nomeApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"/>
+
+        <ImageView
+            android:id="@+id/logoApp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_below="@id/nomeApp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:src="@drawable/logo_app" />
+
+        <TextView
+            android:id="@+id/autores"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Autores: Francisco Rodrigues e Pedro Sousa"
+            android:textSize="16sp"
+            android:layout_below="@id/logoApp"
+            android:layout_marginTop="50dp"/>
+
+        <TextView
+            android:id="@+id/versao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Versão: 2.0"
+            android:textSize="16sp"
+            android:layout_below="@id/autores"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/uc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unidade Curricular: TAM"
+            android:textSize="16sp"
+            android:layout_below="@id/versao"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/uni"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Universidade: ESTGOH"
+            android:textSize="16sp"
+            android:layout_below="@id/uc"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/anoLetivo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ano Letivo: 2023/2024"
+            android:textSize="16sp"
+            android:layout_below="@id/uni"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            android:id="@+id/buttonVoltar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Voltar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="10dp"
+            android:layout_below="@id/anoLetivo"
+            android:layout_marginTop="50dp"/>
+    </RelativeLayout>
+
+</ScrollView>
