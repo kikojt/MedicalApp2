@@ -207,23 +207,6 @@ public class MedCurrentDay extends AppCompatActivity {
             }
         }
 
-        // Método para adicionar entradas para cada hora de administração
-        private void addEntriesForHours(View parentView, Medicamento med, String hora) {
-            if (hora != null && !hora.isEmpty()) {
-                View novoItem = LayoutInflater.from(context).inflate(R.layout.activity_list_current_day, (ViewGroup) parentView, false);
-
-                ImageView imgFormaFarmaceuticaNovo = novoItem.findViewById(R.id.imgFormaFarmaceutica);
-                TextView horarioNovo = novoItem.findViewById(R.id.horario);
-
-                // Configure outros elementos, se necessário
-
-                verificarFormaFarmaceutica(med, imgFormaFarmaceuticaNovo);
-                horarioNovo.setText("Horário: " + hora);
-
-                ((ViewGroup) parentView).addView(novoItem);
-            }
-        }
-
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = convertView;
@@ -236,30 +219,40 @@ public class MedCurrentDay extends AppCompatActivity {
             ImageView imgFormaFarmaceutica = rowView.findViewById(R.id.imgFormaFarmaceutica);
             TextView nome = rowView.findViewById(R.id.nome);
             TextView formaFarmaceutica = rowView.findViewById(R.id.formaFarmaceutica);
+            TextView horario = rowView.findViewById(R.id.horario);
             TextView quantidade = rowView.findViewById(R.id.quantidade);
 
             Medicamento med = adaptMedicamentos.get(position);
 
             String medNome = "Nome: " + med.getNome();
             String medFormaFarmaceutica = "Tipo: " + med.getFormaFarmaceutica();
+            // Concatenar as quatro horas numa única string
+            String medHorario = "Horário: " + concatenaHoras(med.getHora1(), med.getHora2(), med.getHora3(), med.getHora4());
             String medQuantidade = "Quantidade: " + med.getQuantidade();
 
             verificarFormaFarmaceutica(med, imgFormaFarmaceutica);
             nome.setText(medNome);
             formaFarmaceutica.setText(medFormaFarmaceutica);
+            horario.setText(medHorario);
             quantidade.setText(medQuantidade);
-
-            // Adicionar entradas para cada hora de administração
-            addEntriesForHours(rowView, med, med.getHora1());
-            addEntriesForHours(rowView, med, med.getHora2());
-            addEntriesForHours(rowView, med, med.getHora3());
-            addEntriesForHours(rowView, med, med.getHora4());
 
             return rowView;
         }
 
+        // Método para concatenar as horas
+        private String concatenaHoras(String... horas) {
+            StringBuilder horasConcatenadas = new StringBuilder();
 
-
+            for (String hora : horas) {
+                if (hora != null && !hora.isEmpty()) {
+                    if (horasConcatenadas.length() > 0) {
+                        horasConcatenadas.append(", ");
+                    }
+                    horasConcatenadas.append(hora);
+                }
+            }
+            return horasConcatenadas.toString();
+        }
 
         @Override
         public int getCount() {
