@@ -75,8 +75,9 @@ public class MedCurrentDay extends AppCompatActivity {
 
                 // Adiciona o objeto Medicamento à lista
                 for (int i = 0; i <= 4; i++) {
-                    if (medicamento.getHora(i) != null) {
-                        MedicamentoPerTime medicamentoPerTime = new MedicamentoPerTime(medicamento.getHora(i), medicamento);
+                    String hora = medicamento.getHora(i);
+                    if (hora != null && !hora.isEmpty()) {
+                        MedicamentoPerTime medicamentoPerTime = new MedicamentoPerTime(hora, medicamento);
                         medicamentos.add(medicamentoPerTime);
                     }
                 }
