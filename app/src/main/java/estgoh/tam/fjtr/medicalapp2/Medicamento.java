@@ -31,6 +31,21 @@ public class Medicamento {
         this.dataInicio = aDataInicio;
     }
 
+    public Medicamento(Medicamento m) {
+        this.id = m.getId();
+        this.nome = m.getNome();
+        this.dosagem = m.getDosagem();
+        this.formaFarmaceutica = m.getFormaFarmaceutica();
+        this.posologia = m.getPosologia();
+        this.hora1 = m.getHora1();
+        this.hora2 = m.getHora2();
+        this.hora3 = m.getHora3();
+        this.hora4 = m.getHora4();
+        this.quantidade = m.getQuantidade();
+        this.duracao = m.getDuracao();
+        this.dataInicio = m.getDataInicio();
+    }
+
     public int getId() {
         return id;
     }
@@ -48,6 +63,21 @@ public class Medicamento {
 
     public String getPosologia() {
         return posologia;
+    }
+
+    public String getHora(int hora) {
+        switch(hora) {
+            case 1:
+                return getHora1();
+            case 2:
+                return getHora2();
+            case 3:
+                return getHora3();
+            case 4:
+                return getHora4();
+            default:
+                return null;
+        }
     }
 
     public String getHora1() {

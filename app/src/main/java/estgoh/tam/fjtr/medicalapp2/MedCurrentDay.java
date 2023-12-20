@@ -15,12 +15,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.sql.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import java.util.List;
 public class MedCurrentDay extends AppCompatActivity {
 
     ListView medicamentoslistView;
-    List<Medicamento> medicamentos = new ArrayList<>();
+    List<MedicamentoPerTime> medicamentos = new ArrayList<>();
 
     MedDBAdapter medDBAdapter;
 
@@ -47,7 +49,7 @@ public class MedCurrentDay extends AppCompatActivity {
         // Obter todos os medicamentos através do cursor
         Cursor cursor = medDBAdapter.obterMedicamentosAtivos();
 
-        ListAdapter adapter = new MedicamentoAdapter(this, medicamentos);
+        ListAdapter adapter = new MedicamentoPerTimeAdapter(this, medicamentos);
         medicamentoslistView = findViewById(R.id.medicamentos_lv_current_day);
         medicamentoslistView.setAdapter(adapter);
 
@@ -72,7 +74,12 @@ public class MedCurrentDay extends AppCompatActivity {
                 Medicamento medicamento = new Medicamento(id, nome, dosagem, formaFarmaceutica, posologia, hora1, hora2, hora3, hora4, quantidade, duracao, dataInicio, administrado);
 
                 // Adiciona o objeto Medicamento à lista
-                medicamentos.add(medicamento);
+                for (int i = 0; i <= 4; i++) {
+                    if (medicamento.getHora(i) != null) {
+                        MedicamentoPerTime medicamentoPerTime = new MedicamentoPerTime(medicamento.getHora(i), medicamento);
+                        medicamentos.add(medicamentoPerTime);
+                    }
+                }
             } while (cursor.moveToNext());
             // Fecha o cursor após ser utilizado
             cursor.close();
@@ -83,7 +90,7 @@ public class MedCurrentDay extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Obter o objeto Medicamento selecionado
-                Medicamento medicamentoSelecionado = medicamentos.get(position);
+                //Medicamento medicamentoSelecionado = medicamentos.get(position);
 
                 // Criar um Intent para iniciar a atividade InfosMed
                 //Intent intent = new Intent(MedCurrentDay.this, InfoMedActivity.class);
@@ -97,85 +104,11 @@ public class MedCurrentDay extends AppCompatActivity {
         });
     }
 
-    protected void onDestroy() {
-        super.onDestroy();
-        // Fecha o banco de dados quando a atividade for destruída
-        medDBAdapter.close();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_back, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.itemBack) {
-            // Cria um Intent para retornar à MainActivity
-            Intent intent = new Intent(MedCurrentDay.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-    // Método chamado quando a AddMedActivity termina
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-            // O medicamento foi adicionado com sucesso, então atualize à lista
-            atualizarListaMedicamentos();
-        }
-    }
-
-    // Método para atualizar a lista de medicamentos
-    private void atualizarListaMedicamentos() {
-        // Limpa a lista atual
-        medicamentos.clear();
-
-        // Obtém todos os medicamentos da base de dados novamente
-        Cursor cursor = medDBAdapter.obterTodosMedicamentos();
-
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                // Extrair os valores do cursor para criar um objeto Medicamento
-                int id = cursor.getInt(0);
-                String nome = cursor.getString(1);
-                String dosagem = cursor.getString(2);
-                String formaFarmaceutica = cursor.getString(3);
-                String posologia = cursor.getString(4);
-                String hora1 = cursor.getString(5);
-                String hora2 = cursor.getString(6);
-                String hora3 = cursor.getString(7);
-                String hora4 = cursor.getString(8);
-                int quantidade = cursor.getInt(9);
-                String duracao = cursor.getString(10);
-                String dataInicio = cursor.getString(11);
-                int administrado = cursor.getInt(12);
-
-                // Cria um objeto Medicamento com os valores extraídos
-                Medicamento medicamento = new Medicamento(id, nome, dosagem, formaFarmaceutica, posologia, hora1, hora2, hora3, hora4, quantidade, duracao, dataInicio, administrado);
-                // Adiciona o objeto Medicamento à lista
-                medicamentos.add(medicamento);
-
-            } while (cursor.moveToNext());
-            // Fecha o cursor após ser utilizado
-            cursor.close();
-        }
-        // Notifica o adaptador de que os dados foram alterados
-        ((BaseAdapter) medicamentoslistView.getAdapter()).notifyDataSetChanged();
-    }
-
-    class MedicamentoAdapter extends BaseAdapter {
+    class MedicamentoPerTimeAdapter extends BaseAdapter {
         Context context;
-        List<Medicamento> adaptMedicamentos;
+        List<MedicamentoPerTime> adaptMedicamentos;
 
-        public MedicamentoAdapter(Context ctx, List<Medicamento> list) {
+        public MedicamentoPerTimeAdapter(Context ctx, List<MedicamentoPerTime> list) {
             context = ctx;
             adaptMedicamentos = list;
         }
@@ -207,13 +140,90 @@ public class MedCurrentDay extends AppCompatActivity {
             }
         }
 
+        // Verifica se o medicamento está a ser administrado no dia atual
+        private void verificarTempoAdministracao(Medicamento aMed, ImageView aImgAdministrado) {
+            String dataInicio = aMed.getDataInicio();
+            String stringDuracao = aMed.getDuracao();
+
+            // Formata a data de início recebe: "dd/MM/yyyy" retorna no formato adequado para comparar
+            Calendar timestamp = Calendar.getInstance();
+            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+            Date dataFormatada = null;
+            Date dataAtual = timestamp.getTime();
+            try {
+                dataFormatada = formato.parse(dataInicio);
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Extrai o inteiro da string
+            int duracao;
+
+            if (stringDuracao.equalsIgnoreCase("habitual")) {
+                duracao = -1;
+            } else {
+                duracao = Integer.parseInt(stringDuracao.split(" ")[0]);
+            }
+
+            // Calcula o último dia de administração
+            Calendar ultimoDia = Calendar.getInstance();
+            ultimoDia.setTime(dataFormatada);
+
+            if (duracao != -1) {
+                ultimoDia.add(Calendar.DAY_OF_MONTH, duracao);
+            }
+
+            // Verifica se o medicamento está sendo administrado no dia atual
+            if (dataAtual.after(dataFormatada) && (duracao == -1 || dataAtual.before(ultimoDia.getTime()))) {
+                aImgAdministrado.setImageResource(R.drawable.checked);
+                aImgAdministrado.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        exibirMensagemAlerta("O medicamento '" + aMed.getNome() + "' está sendo administrado hoje!");
+                    }
+                });
+                // Define o atributo "ativo" como 1, ou seja, o medicamento está sendo administrado
+                aMed.setAtivo(1);
+
+            } else {
+                aImgAdministrado.setImageResource(R.drawable.not_checked);
+                aImgAdministrado.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        exibirMensagemAlerta("O medicamento '" + aMed.getNome() + "' não está sendo administrado hoje!");
+                    }
+                });
+                // Define o atributo "ativo" como 1, ou seja, o medicamento está sendo administrado
+                aMed.setAtivo(0);
+            }
+
+            // Atualiza o atributo "ativo" na base de dados
+            medDBAdapter.atualizarAtivoMedicamento(aMed.getId(), aMed.getAtivo());
+        }
+
+        private void exibirMensagemAlerta(String aMensagem) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Informação");
+            builder.setMessage(aMensagem);
+
+            builder.setNegativeButton("Sair", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = convertView;
 
             if (rowView == null) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = inflater.inflate(R.layout.activity_list_current_day, parent, false);
+                rowView = inflater.inflate(R.layout.activity_list_item, parent, false);
             }
 
             ImageView imgFormaFarmaceutica = rowView.findViewById(R.id.imgFormaFarmaceutica);
@@ -222,12 +232,13 @@ public class MedCurrentDay extends AppCompatActivity {
             TextView horario = rowView.findViewById(R.id.horario);
             TextView quantidade = rowView.findViewById(R.id.quantidade);
 
-            Medicamento med = adaptMedicamentos.get(position);
+            MedicamentoPerTime mpt = adaptMedicamentos.get(position);
+            Medicamento med = mpt.getMedicamento();
 
             String medNome = "Nome: " + med.getNome();
             String medFormaFarmaceutica = "Tipo: " + med.getFormaFarmaceutica();
             // Concatenar as quatro horas numa única string
-            String medHorario = "Horário: " + concatenaHoras(med.getHora1(), med.getHora2(), med.getHora3(), med.getHora4());
+            String medHorario = "Horário: " + mpt.getHora();
             String medQuantidade = "Quantidade: " + med.getQuantidade();
 
             verificarFormaFarmaceutica(med, imgFormaFarmaceutica);
@@ -269,4 +280,57 @@ public class MedCurrentDay extends AppCompatActivity {
             return position;
         }
     }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        // Fecha o banco de dados quando a atividade for destruída
+        medDBAdapter.close();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_back, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.itemBack) {
+            // Cria um Intent para retornar à MainActivity
+            Intent intent = new Intent(MedCurrentDay.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+
+        // Verifica qual o tipo de forma farmacêutica para definir a img correta
+        private void verificarFormaFarmaceutica(Medicamento aMed, ImageView aImgFormaFarmaceutica) {
+            switch (aMed.getFormaFarmaceutica()) {
+                case "Comprimido":
+                    aImgFormaFarmaceutica.setImageResource(R.drawable.comprimido);
+                    break;
+                case "Cápsula":
+                    aImgFormaFarmaceutica.setImageResource(R.drawable.capsula);
+                    break;
+                case "Colírio (gotas)":
+                    aImgFormaFarmaceutica.setImageResource(R.drawable.colirio);
+                    break;
+                case "Xarope":
+                    aImgFormaFarmaceutica.setImageResource(R.drawable.xarope);
+                    break;
+                case "Injeção":
+                    aImgFormaFarmaceutica.setImageResource(R.drawable.injecao);
+                    break;
+                case "Pomada":
+                    aImgFormaFarmaceutica.setImageResource(R.drawable.pomada);
+                    break;
+                case "Efervescente":
+                    aImgFormaFarmaceutica.setImageResource(R.drawable.efervescente);
+                    break;
+            }
+        }
 }
