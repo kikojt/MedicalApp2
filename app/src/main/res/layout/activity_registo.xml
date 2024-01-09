@@ -39,7 +39,7 @@
             android:layout_marginTop="50dp"/>
 
         <EditText
-            android:id="@+id/nomeUtilizador"
+            android:id="@+id/newNomeUtilizador"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:padding="10dp"/>
@@ -53,7 +53,7 @@
             android:layout_marginTop="18dp"/>
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/newPassword"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -87,14 +87,14 @@
                 android:id="@+id/buttonVoltarLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="login"
+                android:text="Login"
                 android:layout_marginHorizontal="10dp"/>
 
             <Button
                 android:id="@+id/buttonRegistar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Registe-se"
+                android:text="Registar"
                 android:layout_marginHorizontal="10dp"/>
 
         </LinearLayout>

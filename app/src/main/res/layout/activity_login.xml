@@ -67,10 +67,10 @@
             android:layout_marginVertical="10dp" >
 
             <Button
-                android:id="@+id/buttonRegistar"
+                android:id="@+id/buttonRegisto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Registe-se"
+                android:text="Registo"
                 android:layout_marginHorizontal="10dp"/>
 
             <Button
