@@ -115,6 +115,7 @@ public class RegistarActivity extends Activity {
 
 class ResponseCode {
 
+    private String nomeUtilizador;
     private int Code;
 
     public int getCode() {
@@ -123,5 +124,13 @@ class ResponseCode {
 
     public void setCode(int Code) {
         this.Code = Code;
+    }
+
+    public String getNomeUtilizador() {
+        return nomeUtilizador;
+    }
+
+    public void setNomeUtilizador(String nomeUtilizador) {
+        this.nomeUtilizador = nomeUtilizador;
     }
 }

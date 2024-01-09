@@ -158,6 +158,10 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.itemAbout) {
             Intent intent = new Intent(MainActivity.this, About.class);
             startActivity(intent);
+        } else if (itemId == R.id.itemConta) {
+            Intent intent = new Intent(MainActivity.this, InfoUtilizador.class);
+            intent.putExtra("token", token);
+            startActivity(intent);
         } else if (itemId == R.id.itemLogout) {
             Utilizador utilizador = new Utilizador();
             utilizador.setU_token(token);
