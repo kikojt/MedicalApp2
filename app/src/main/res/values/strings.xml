@@ -5,5 +5,6 @@
     <string name="informa_o_do_medicamento">Informação do Medicamento</string>
     <string name="medicamentos_dia_atual">Medicação de Hoje</string>
     <string name="historico_medicamento">Histórico de Administração</string>
+    <string name="administracao">Administração</string>
     <string name="about">Sobre</string>
 </resources>

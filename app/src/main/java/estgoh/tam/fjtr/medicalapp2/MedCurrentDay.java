@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.Serializable;
 import java.sql.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -91,18 +92,43 @@ public class MedCurrentDay extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Obter o objeto Medicamento selecionado
-                //Medicamento medicamentoSelecionado = medicamentos.get(position);
+                MedicamentoPerTime horaSelecionada = medicamentos.get(position);
 
                 // Criar um Intent para iniciar a atividade InfosMed
-                //Intent intent = new Intent(MedCurrentDay.this, InfoMedActivity.class);
+                Intent intent = new Intent(MedCurrentDay.this, MedAdministrationActivity.class);
 
-                // Passar o ID do Medicamento selecionado para a atividade InfosMed com a chave "id"
-                //intent.putExtra("id", medicamentoSelecionado.getId());
+                // Passar o objeto MedicamentoPerTime serializado para a atividade InfosMed com a chave "medicamento"
+                intent.putExtra("medicamento", (CharSequence) horaSelecionada);
 
                 // Iniciar a atividade InfosMed
-                //startActivity(intent);
+                startActivity(intent);
             }
         });
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+        // Fecha a base de dados quando a atividade for destruída
+        medDBAdapter.close();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_back, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.itemBack) {
+            // Cria um Intent para retornar à MainActivity
+            Intent intent = new Intent(MedCurrentDay.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        } else {
+            return false;
+        }
+        return true;
     }
 
     class MedicamentoPerTimeAdapter extends BaseAdapter {
@@ -141,90 +167,13 @@ public class MedCurrentDay extends AppCompatActivity {
             }
         }
 
-        // Verifica se o medicamento está a ser administrado no dia atual
-        private void verificarTempoAdministracao(Medicamento aMed, ImageView aImgAdministrado) {
-            String dataInicio = aMed.getDataInicio();
-            String stringDuracao = aMed.getDuracao();
-
-            // Formata a data de início recebe: "dd/MM/yyyy" retorna no formato adequado para comparar
-            Calendar timestamp = Calendar.getInstance();
-            SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-            Date dataFormatada = null;
-            Date dataAtual = timestamp.getTime();
-            try {
-                dataFormatada = formato.parse(dataInicio);
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
-
-            // Extrai o inteiro da string
-            int duracao;
-
-            if (stringDuracao.equalsIgnoreCase("habitual")) {
-                duracao = -1;
-            } else {
-                duracao = Integer.parseInt(stringDuracao.split(" ")[0]);
-            }
-
-            // Calcula o último dia de administração
-            Calendar ultimoDia = Calendar.getInstance();
-            ultimoDia.setTime(dataFormatada);
-
-            if (duracao != -1) {
-                ultimoDia.add(Calendar.DAY_OF_MONTH, duracao);
-            }
-
-            // Verifica se o medicamento está sendo administrado no dia atual
-            if (dataAtual.after(dataFormatada) && (duracao == -1 || dataAtual.before(ultimoDia.getTime()))) {
-                aImgAdministrado.setImageResource(R.drawable.checked);
-                aImgAdministrado.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        exibirMensagemAlerta("O medicamento '" + aMed.getNome() + "' está sendo administrado hoje!");
-                    }
-                });
-                // Define o atributo "ativo" como 1, ou seja, o medicamento está sendo administrado
-                aMed.setAtivo(1);
-
-            } else {
-                aImgAdministrado.setImageResource(R.drawable.not_checked);
-                aImgAdministrado.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        exibirMensagemAlerta("O medicamento '" + aMed.getNome() + "' não está sendo administrado hoje!");
-                    }
-                });
-                // Define o atributo "ativo" como 1, ou seja, o medicamento está sendo administrado
-                aMed.setAtivo(0);
-            }
-
-            // Atualiza o atributo "ativo" na base de dados
-            medDBAdapter.atualizarAtivoMedicamento(aMed.getId(), aMed.getAtivo());
-        }
-
-        private void exibirMensagemAlerta(String aMensagem) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Informação");
-            builder.setMessage(aMensagem);
-
-            builder.setNegativeButton("Sair", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-
-            AlertDialog dialog = builder.create();
-            dialog.show();
-        }
-
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = convertView;
 
             if (rowView == null) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                rowView = inflater.inflate(R.layout.activity_list_item, parent, false);
+                rowView = inflater.inflate(R.layout.activity_list_current_day, parent, false);
             }
 
             ImageView imgFormaFarmaceutica = rowView.findViewById(R.id.imgFormaFarmaceutica);
@@ -251,21 +200,6 @@ public class MedCurrentDay extends AppCompatActivity {
             return rowView;
         }
 
-        // Método para concatenar as horas
-        private String concatenaHoras(String... horas) {
-            StringBuilder horasConcatenadas = new StringBuilder();
-
-            for (String hora : horas) {
-                if (hora != null && !hora.isEmpty()) {
-                    if (horasConcatenadas.length() > 0) {
-                        horasConcatenadas.append(", ");
-                    }
-                    horasConcatenadas.append(hora);
-                }
-            }
-            return horasConcatenadas.toString();
-        }
-
         @Override
         public int getCount() {
             return adaptMedicamentos.size();
@@ -281,57 +215,4 @@ public class MedCurrentDay extends AppCompatActivity {
             return position;
         }
     }
-
-    protected void onDestroy() {
-        super.onDestroy();
-        // Fecha o banco de dados quando a atividade for destruída
-        medDBAdapter.close();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_back, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.itemBack) {
-            // Cria um Intent para retornar à MainActivity
-            Intent intent = new Intent(MedCurrentDay.this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
-            finish();
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-
-        // Verifica qual o tipo de forma farmacêutica para definir a img correta
-        private void verificarFormaFarmaceutica(Medicamento aMed, ImageView aImgFormaFarmaceutica) {
-            switch (aMed.getFormaFarmaceutica()) {
-                case "Comprimido":
-                    aImgFormaFarmaceutica.setImageResource(R.drawable.comprimido);
-                    break;
-                case "Cápsula":
-                    aImgFormaFarmaceutica.setImageResource(R.drawable.capsula);
-                    break;
-                case "Colírio (gotas)":
-                    aImgFormaFarmaceutica.setImageResource(R.drawable.colirio);
-                    break;
-                case "Xarope":
-                    aImgFormaFarmaceutica.setImageResource(R.drawable.xarope);
-                    break;
-                case "Injeção":
-                    aImgFormaFarmaceutica.setImageResource(R.drawable.injecao);
-                    break;
-                case "Pomada":
-                    aImgFormaFarmaceutica.setImageResource(R.drawable.pomada);
-                    break;
-                case "Efervescente":
-                    aImgFormaFarmaceutica.setImageResource(R.drawable.efervescente);
-                    break;
-            }
-        }
 }

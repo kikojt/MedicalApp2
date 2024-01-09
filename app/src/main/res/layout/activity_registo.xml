@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/nomeApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"/>
+
+        <ImageView
+            android:id="@+id/logoApp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_below="@id/nomeApp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="15dp"
+            android:src="@drawable/logo_app" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nome de Utilizador"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="50dp"/>
+
+        <EditText
+            android:id="@+id/nomeUtilizador"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="18dp"/>
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:padding="10dp"/>
+
+        <!-- Campo para confirmar a senha -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirmar Password"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="18dp"/>
+
+        <EditText
+            android:id="@+id/confirmarPassword"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginVertical="10dp" >
+
+            <Button
+                android:id="@+id/buttonVoltarLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="login"
+                android:layout_marginHorizontal="10dp"/>
+
+            <Button
+                android:id="@+id/buttonRegistar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registe-se"
+                android:layout_marginHorizontal="10dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

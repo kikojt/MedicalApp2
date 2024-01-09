@@ -11,10 +11,11 @@ import android.util.Log;
 public class MedDBAdapter {
     String TAG = "MedicalApp";
     String DB_NAME = "BD_Med";
-    String DB_TABLE = "medicamento";
+    String DB_MED = "medicamento";
+    String DB_HISTORICO = "historico";
     int DB_VERSION = 1;
 
-    String SQL_CREATE = "CREATE TABLE " + DB_TABLE +
+    String SQL_CREATE_MED = "CREATE TABLE " + DB_MED +
             "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
             "nome TEXT NOT NULL, " +
             "dosagem TEXT NOT NULL, " +
@@ -29,7 +30,16 @@ public class MedDBAdapter {
             "dataInicio TEXT, " +
             "ativo INTEGER NOT NULL CHECK (ativo IN (0, 1)))";
 
-    String SQL_DROP = "DROP TABLE IF EXISTS " + DB_TABLE;
+    String SQL_CREATE_HIS ="CREATE TABLE historico" +
+            "(id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "medicamento_id INTEGER NOT NULL, " +
+            "hora1Administracao TEXT, " +
+            "hora2Administracao TEXT, " +
+            "hora3Administracao TEXT, " +
+            "hora4Administracao TEXT, " +
+            "FOREIGN KEY (medicamento_id) REFERENCES " + DB_MED + "(id))";
+
+    String SQL_DROP = "DROP TABLE IF EXISTS " + DB_MED;
 
     DatabaseHelper myDb;
     private SQLiteDatabase db;
@@ -44,7 +54,8 @@ public class MedDBAdapter {
         }
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(SQL_CREATE);
+            db.execSQL(SQL_CREATE_MED);
+            db.execSQL(SQL_CREATE_HIS);
             Log.d(TAG, "Tabela de medicamentos criada!");
         }
         @Override
@@ -65,7 +76,7 @@ public class MedDBAdapter {
 
     public long adicionarMedicamento(String nome, String dosagem, String formaFarmaceutica, String posologia, String hora1, String hora2, String hora3, String hora4, int quantidade, String duracao, String dataInicio) {
         // Verifica quantos id´s existem
-        String query = "SELECT MAX(id) FROM " + DB_TABLE;
+        String query = "SELECT MAX(id) FROM " + DB_MED;
         Cursor cursor = db.rawQuery(query, null);
 
         long maxId = 0;
@@ -90,7 +101,7 @@ public class MedDBAdapter {
         values.put("dataInicio", dataInicio);
         values.put("ativo", 0);
 
-        return db.insert(DB_TABLE,
+        return db.insert(DB_MED,
                          null,
                          values);
     }
@@ -109,14 +120,14 @@ public class MedDBAdapter {
         values.put("duracao", duracao);
         values.put("dataInicio", dataInicio);
 
-        return db.update(DB_TABLE,
+        return db.update(DB_MED,
                          values,
                          "id=?",
                          new String[]{String.valueOf((id))});
     }
 
     public Cursor obterTodosMedicamentos() {
-        Cursor cursor = db.query(DB_TABLE,
+        Cursor cursor = db.query(DB_MED,
                                  new String[]{"id", "nome", "dosagem", "formaFarmaceutica", "posologia", "hora1", "hora2", "hora3", "hora4", "quantidade", "duracao", "dataInicio", "ativo"},
                                  null,
                                  null,
@@ -127,7 +138,7 @@ public class MedDBAdapter {
     }
 
     public Cursor obterMedicamento(long id) {
-        Cursor cursor = db.query(DB_TABLE,
+        Cursor cursor = db.query(DB_MED,
                 new String[]{"id", "nome", "dosagem", "formaFarmaceutica", "posologia", "hora1", "hora2", "hora3", "hora4", "quantidade", "duracao", "dataInicio", "ativo"},
                 "id=?",
                 new String[]{String.valueOf(id)},
@@ -139,18 +150,18 @@ public class MedDBAdapter {
 
     public void removerMedicamento(long id) {
         // Remove a linha (Medicamento) com o id fornecido
-        db.delete(DB_TABLE,
+        db.delete(DB_MED,
                   "id=?",
                   new String[]{String.valueOf(id)});
 
         // Faz a redefinição dos id's na tabela
-        String updateQuery = "UPDATE " + DB_TABLE + " SET id = id - 1 WHERE id > ?";
+        String updateQuery = "UPDATE " + DB_MED + " SET id = id - 1 WHERE id > ?";
         db.execSQL(updateQuery, new String[]{String.valueOf(id)});
     }
 
     // Verifica se o medicamento já existe através do nome e data de início
     public boolean verificarExistenciaMedicamento(String nome, String dataInicio) {
-        Cursor cursor = db.query(DB_TABLE,
+        Cursor cursor = db.query(DB_MED,
                                  new String[]{"id"},
                                  "nome=? AND dataInicio=?",
                                  new String[]{nome, dataInicio},
@@ -165,9 +176,9 @@ public class MedDBAdapter {
     }
 
     // Verifica se o medicamento já existe através do nome e data de início,
-    // excluindo o medicamento atual, ataravés do id
+    // Excluindo o medicamento atual, ataravés do id
     public boolean verificarExistenciaMedEdicao(int id, String nome, String dataInicio) {
-        Cursor cursor = db.query(DB_TABLE,
+        Cursor cursor = db.query(DB_MED,
                                  new String[]{"id"},
                                  "id!=? AND nome=? AND dataInicio=?",
                                  new String[]{ String.valueOf(id), nome, dataInicio},
@@ -186,7 +197,7 @@ public class MedDBAdapter {
         ContentValues values = new ContentValues();
         values.put("ativo", novoAtivo);
 
-        return db.update(DB_TABLE,
+        return db.update(DB_MED,
                          values,
                          "id=?",
                          new String[]{String.valueOf(id)});
@@ -194,10 +205,10 @@ public class MedDBAdapter {
 
     // Obtém os medicamentos ativos, que estão a ser administrados no dia de hoje
     public Cursor obterMedicamentosAtivos() {
-        Cursor cursor = db.query(DB_TABLE,
+        Cursor cursor = db.query(DB_MED,
                 new String[]{"id", "nome", "dosagem", "formaFarmaceutica", "posologia", "hora1", "hora2", "hora3", "hora4", "quantidade", "duracao", "dataInicio", "ativo"},
                 "ativo=?",
-                new String[]{String.valueOf(1)}, // 1 indica medicamentos ativos
+                new String[]{String.valueOf(1)},
                 null,
                 null,
                 "hora1 ASC, hora2 ASC, hora3 ASC, hora4 ASC");
