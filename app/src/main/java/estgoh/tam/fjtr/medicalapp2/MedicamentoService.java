@@ -20,7 +20,7 @@ public interface MedicamentoService {
     @PUT("/logout")
     Call<ResponseCode> logout(@Body Utilizador utilizador);
 
-    @POST("/adicionar_medicamneto")
+    @POST("/adicionar_medicamento")
     //Call<AdicionaResponse> adicionaMedicamento(@Body Map<String, Object> request);
 
     @GET("/listar_medicamentos")

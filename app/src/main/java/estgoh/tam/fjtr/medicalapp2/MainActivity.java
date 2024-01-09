@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -30,7 +32,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MainActivity extends AppCompatActivity {
+    private MedicamentoService medicamentoService;
+    String host_port = "10.0.2.2:5000";
+    String token;
 
     ListView medicamentoslistView;
     List<Medicamento> medicamentos = new ArrayList<>();
@@ -41,6 +54,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        token = (String) getIntent().getSerializableExtra("token");
+
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        // set your desired log level (others: NONE, BASIC, HEADERS)
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+
+        // add logging as a interceptor (it should be the last one)
+        httpClient.addInterceptor(logging);
+
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl("http://" + host_port)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient.build());
+
+        Retrofit retrofit = builder.build();
+
+        medicamentoService = retrofit.create(MedicamentoService.class);
 
         medDBAdapter = new MedDBAdapter(this);
         medDBAdapter.open();
@@ -125,10 +158,39 @@ public class MainActivity extends AppCompatActivity {
         } else if (itemId == R.id.itemAbout) {
             Intent intent = new Intent(MainActivity.this, About.class);
             startActivity(intent);
+        } else if (itemId == R.id.itemLogout) {
+            Utilizador utilizador = new Utilizador();
+            utilizador.setU_token(token);
+
+            Call<ResponseCode> call = medicamentoService.logout(utilizador);
+
+            call.enqueue(new Callback<ResponseCode>() {
+                @Override
+                public void onResponse(Call<ResponseCode> call, Response<ResponseCode> response) {
+                    if (response.isSuccessful()) {
+                        showToast("Logout efetuado com sucesso!");
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        showToast("Erro ao realizar logout!");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseCode> call, Throwable t) {
+                    t.printStackTrace();
+                    Log.i("TAG", "Erro: " + t.getMessage());
+                }
+            });
         } else {
             return super.onOptionsItemSelected(item);
         }
         return true;
+    }
+
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     // Método chamado quando a AddMedActivity termina

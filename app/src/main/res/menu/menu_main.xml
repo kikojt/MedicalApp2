@@ -8,8 +8,17 @@
         app:showAsAction="collapseActionView" />
 
     <item
+        android:id="@+id/itemConta"
+        android:title="@string/conta"
+        app:showAsAction="collapseActionView" />
+
+    <item
         android:id="@+id/itemAbout"
         android:title="@string/about"
         app:showAsAction="collapseActionView" />
 
+    <item
+        android:id="@+id/itemLogout"
+        android:title="@string/logout"
+        app:showAsAction="collapseActionView" />
 </menu>

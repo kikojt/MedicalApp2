@@ -19,7 +19,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RegistarActivity extends Activity {
 
     private MedicamentoService medicamentoService;
-    String host_port = "10.0.2.2:8080";
+    String host_port = "10.0.2.2:5000";
     EditText newNomeUtilizador;
     EditText newPassword;
     EditText confirmNewPassword;
@@ -70,21 +70,21 @@ public class RegistarActivity extends Activity {
                 }
 
                 Utilizador utilizador = new Utilizador();
-                utilizador.setNome(nome);
-                utilizador.setPassword(password);
+                utilizador.setU_nome(nome);
+                utilizador.setU_password(password);
 
                 Call<ResponseCode> call = medicamentoService.registar(utilizador);
 
                 call.enqueue(new Callback<ResponseCode>() {
                     @Override
                     public void onResponse(Call<ResponseCode> call, Response<ResponseCode> response) {
-                        if (response.isSuccessful()) {
+                        if (response.body().getCode() == 200) {
                             showToast("Utilizador registado com sucesso!");
                             Intent intent = new Intent(RegistarActivity.this, LoginActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
-                            showToast("Erro no registo. Código de resposta: " + response.code());
+                            showToast("Não foi possivel registar o utilizador!");
                         }
                     }
 
@@ -94,7 +94,6 @@ public class RegistarActivity extends Activity {
                         showToast("onFailure");
                     }
                 });
-
             }
         });
 
@@ -116,13 +115,13 @@ public class RegistarActivity extends Activity {
 
 class ResponseCode {
 
-    private int code;
+    private int Code;
 
     public int getCode() {
-        return code;
+        return Code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setCode(int Code) {
+        this.Code = Code;
     }
 }

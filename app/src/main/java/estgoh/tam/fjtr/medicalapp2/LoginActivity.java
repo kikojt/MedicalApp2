@@ -2,11 +2,13 @@ package estgoh.tam.fjtr.medicalapp2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import okhttp3.OkHttpClient;
@@ -20,7 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LoginActivity extends AppCompatActivity {
 
     private MedicamentoService medicamentoService;
-    String host_port = "10.0.2.2:8080";
+    String host_port = "10.0.2.2:5000";
     EditText editNome;
     EditText editPassword;
 
@@ -76,31 +78,33 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 Utilizador utilizador = new Utilizador();
-                utilizador.setNome(nome);
-                utilizador.setPassword(password);
+                utilizador.setU_nome(nome);
+                utilizador.setU_password(password);
 
                 Call<LoginResponse> call = medicamentoService.login(utilizador);
 
                 call.enqueue(new Callback<LoginResponse>() {
                     @Override
                     public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                        if (response.isSuccessful()) {
+                        //Log.d("response: ", response.body().toString());
+                        if (response.body().getCode() == 200) {
                             LoginResponse loginResponse = response.body();
                             String token = loginResponse.getToken();
-                            //showToast("Login bem-sucedido!");
-                            // Redirecionar para a MainActivity
+
+                            showToast("Login efetuado com sucesso!");
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.putExtra("token", token);
                             startActivity(intent);
                             finish();
                         } else {
-                            showToast("Erro no login. Código de resposta: " + response.code());
+                            showToast("Login sem sucesso!");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<LoginResponse> call, Throwable t) {
                         t.printStackTrace();
-                        showToast("onFailure");
+                        Log.i("TAG", "Erro: " + t.getMessage());
                     }
                 });
             }
@@ -115,13 +119,30 @@ public class LoginActivity extends AppCompatActivity {
 }
 
 class LoginResponse {
-    private String token;
+    private int Code;
+    private String Token;
 
     public String getToken() {
-        return token;
+        return Token;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setToken(String Token) {
+        this.Token = Token;
+    }
+
+    public int getCode() {
+        return Code;
+    }
+
+    public void setCode(int code) {
+        Code = code;
+    }
+
+    @Override
+    public String toString() {
+        return "LoginResponse{" +
+                "Code=" + Code +
+                ", Token='" + Token + '\'' +
+                '}';
     }
 }

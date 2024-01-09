@@ -7,4 +7,6 @@
     <string name="historico_medicamento">Histórico de Administração</string>
     <string name="administracao">Administração</string>
     <string name="about">Sobre</string>
+    <string name="conta">Conta</string>
+    <string name="logout">Logout</string>
 </resources>
